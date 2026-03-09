@@ -14,8 +14,7 @@ use std::{
 };
 
 use crate::{
-    QualifyingData, VmInstanceAttestResponse, VmInstanceAttestation,
-    VmInstanceRot,
+    QualifyingData, Request, Response, VmInstanceAttestation, VmInstanceRot,
     mock::{VmInstanceRotMock, VmInstanceRotMockError},
 };
 
@@ -77,14 +76,11 @@ impl VmInstanceRot for VmInstanceRotSocketClient {
         reader.read_line(&mut response)?;
 
         debug!("got response: {response}");
-        // map `VmInstanceAttestResponse` to `Result<PlatformAttestation, Self::Error>`
-        let response: VmInstanceAttestResponse =
-            serde_json::from_str(&response)?;
+        // map `Response` to `Result<PlatformAttestation, Self::Error>`
+        let response: Response = serde_json::from_str(&response)?;
         match response {
-            VmInstanceAttestResponse::Attestation(p) => Ok(p),
-            VmInstanceAttestResponse::Error(e) => {
-                Err(Self::Error::VmInstanceRot(e))
-            }
+            Response::Attest(p) => Ok(p),
+            Response::Error(e) => Err(Self::Error::VmInstanceRot(e)),
         }
     }
 }
@@ -144,9 +140,8 @@ impl VmInstanceRotSocketServer {
                         "Error: Line length exceeded the limit of {} bytes.",
                         MAX_LINE_LENGTH
                     );
-                    let response = VmInstanceAttestResponse::Error(
-                        "Request too long".to_string(),
-                    );
+                    let response =
+                        Response::Error("Request too long".to_string());
                     let mut response = serde_json::to_string(&response)?;
                     response.push('\n');
                     debug!("sending error response: {response}");
@@ -158,13 +153,12 @@ impl VmInstanceRotSocketServer {
                 }
 
                 debug!("string received: {msg}");
-                let result: Result<QualifyingData, serde_json::Error> =
+                let result: Result<Request, serde_json::Error> =
                     serde_json::from_str(&msg);
-                let qualifying_data = match result {
+                let request = match result {
                     Ok(q) => q,
                     Err(e) => {
-                        let response =
-                            VmInstanceAttestResponse::Error(e.to_string());
+                        let response = Response::Error(e.to_string());
                         let mut response = serde_json::to_string(&response)?;
                         response.push('\n');
                         debug!("sending error response: {response}");
@@ -176,13 +170,16 @@ impl VmInstanceRotSocketServer {
                     }
                 };
 
-                debug!("qualifying data received: {qualifying_data:?}");
-
-                // NOTE: We do not contribute to the `QualifyingData` here. The
-                // self.mock impl will handle this for us.
-                let response = match self.mock.attest(&qualifying_data) {
-                    Ok(a) => VmInstanceAttestResponse::Attestation(a),
-                    Err(e) => VmInstanceAttestResponse::Error(e.to_string()),
+                let response = match request {
+                    Request::Attest(q) => {
+                        debug!("qualifying data received: {q:?}");
+                        // NOTE: We do not contribute to the `QualifyingData`
+                        // here. The self.mock impl will handle this for us.
+                        match self.mock.attest(&q) {
+                            Ok(a) => Response::Attest(a),
+                            Err(e) => Response::Error(e.to_string()),
+                        }
+                    }
                 };
 
                 let mut response = serde_json::to_string(&response)?;
