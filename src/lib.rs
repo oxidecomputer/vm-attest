@@ -113,11 +113,16 @@ pub struct VmInstanceAttestation {
     pub measurement_logs: Vec<MeasurementLog>,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub enum Request {
+    Attest(QualifyingData),
+}
+
 /// This enumeration represents the response message returned by the
 /// `VmInstanceRot` in response to the `attest` function / message.
 #[derive(Debug, Deserialize, Serialize)]
-pub enum VmInstanceAttestResponse {
-    Attestation(VmInstanceAttestation),
+pub enum Response {
+    Attest(VmInstanceAttestation),
     Error(String),
 }
 
