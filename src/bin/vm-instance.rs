@@ -13,7 +13,7 @@ use std::{
 
 use vsock::{VMADDR_CID_HOST, VsockAddr, VsockStream};
 
-use vm_attest_trait::{
+use vm_attest::{
     socket::{VmInstanceRotSocketClient, VmInstanceTcpServer},
     vsock::VmInstanceRotVsockClient,
 };

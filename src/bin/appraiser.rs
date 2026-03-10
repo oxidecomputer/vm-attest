@@ -11,7 +11,7 @@ use dice_verifier::{
 use log::{debug, info};
 use sha2::{Digest, Sha256};
 use std::{fs, net::TcpStream, os::unix::net::UnixStream, path::PathBuf};
-use vm_attest_trait::{
+use vm_attest::{
     QualifyingData, RotType, VmInstanceAttestation, VmInstanceConf,
     VmInstanceRot,
     socket::{VmInstanceRotSocketClient, VmInstanceTcp},
