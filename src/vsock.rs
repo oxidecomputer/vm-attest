@@ -161,12 +161,13 @@ impl VmInstanceRot for VmInstanceRotVsockClient {
         &self,
         qualifying_data: &QualifyingData,
     ) -> Result<VmInstanceAttestation, Self::Error> {
-        let mut command = serde_json::to_string(&qualifying_data)?;
-        command.push('\n');
-        let command = command;
+        let request = Request::Attest(qualifying_data.clone());
+        let mut request = serde_json::to_string(&request)?;
+        request.push('\n');
+        let request = request;
 
-        debug!("writing command");
-        self.socket.borrow_mut().write_all(command.as_bytes())?;
+        debug!("writing request: {request}");
+        self.socket.borrow_mut().write_all(request.as_bytes())?;
 
         let mut socket_mut = self.socket.borrow_mut();
         let mut reader = BufReader::new(socket_mut.deref_mut());
