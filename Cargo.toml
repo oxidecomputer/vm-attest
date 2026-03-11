@@ -3,9 +3,11 @@ name = "vm-attest"
 version = "0.1.0"
 edition = "2024"
 license = "MPL-2.0"
+build = "build/main.rs"
 
 [features]
 default = ["vsock"]
+test-data = []
 vsock = ["dep:vsock"]
 
 [dependencies]
@@ -35,6 +37,9 @@ x509-cert = "0.2.5"
 
 [build-dependencies]
 anyhow.version = "1.0.100"
+
+[dev-dependencies]
+vm-attest = { path = ".", features = ["test-data"] }
 
 [[bin]]
 name = "appraiser"
