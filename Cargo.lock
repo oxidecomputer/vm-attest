@@ -1541,6 +1541,7 @@ dependencies = [
  "ed25519-dalek",
  "env_logger",
  "getrandom 0.3.4",
+ "hex",
  "hubpack",
  "libc",
  "log",
