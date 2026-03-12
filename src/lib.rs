@@ -8,7 +8,7 @@ use sha2::{
     Sha256,
     digest::{core_api::OutputSizeUser, typenum::Unsigned},
 };
-use std::{error, fmt};
+use std::{error, fmt, str};
 use uuid::Uuid;
 
 pub mod mock;
@@ -53,6 +53,18 @@ impl From<[u8; 32]> for QualifyingData {
     }
 }
 
+#[derive(Debug, thiserror::Error, PartialEq)]
+pub enum MeasurementError {
+    #[error("wrong number of fields")]
+    FieldCount,
+    #[error("invalid hex string")]
+    HexDecode(#[from] hex::FromHexError),
+    #[error("digest is wrong length for algorithm")]
+    BadLength,
+    #[error("unsupported algorithm identifier")]
+    UnsupportedAlg(String),
+}
+
 /// A measurement is a digest. This type represents a measurement with the
 /// digest algorithm represented by the variant with the digest in the
 /// associated data. When serializing the algorithm identifier must be one
@@ -63,6 +75,33 @@ impl From<[u8; 32]> for QualifyingData {
 pub enum Measurement {
     #[serde(rename = "sha-256")]
     Sha256(#[serde_as(as = "Hex")] [u8; SHA256_DIGEST_LENGTH]),
+}
+
+impl str::FromStr for Measurement {
+    type Err = MeasurementError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let fields: Vec<&str> = s.split(';').collect();
+
+        if fields.len() != 2 {
+            return Err(Self::Err::FieldCount);
+        }
+
+        let (prefix, digest) = (fields[0], fields[1]);
+        let measurement = match prefix {
+            "sha-256" => {
+                let digest = hex::decode(digest)?;
+                Measurement::Sha256(
+                    digest.try_into().map_err(|_| Self::Err::BadLength)?,
+                )
+            }
+            _ => {
+                return Err(Self::Err::UnsupportedAlg(prefix.to_string()));
+            }
+        };
+
+        Ok(measurement)
+    }
 }
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
@@ -137,4 +176,74 @@ pub trait VmInstanceRot {
         &self,
         qualifying_data: &QualifyingData,
     ) -> Result<VmInstanceAttestation, Self::Error>;
+}
+
+#[cfg(test)]
+mod test {
+    use crate::*;
+    use hex::FromHexError;
+
+    #[test]
+    fn empty_measurement_str() {
+        let input = "";
+
+        let measurement: Result<Measurement, _> = input.parse();
+        assert_eq!(measurement, Err(MeasurementError::FieldCount));
+    }
+
+    #[test]
+    fn measurement_str_no_sep() {
+        let input = "sha-256:1";
+        let measurement: Result<Measurement, _> = input.parse();
+
+        assert_eq!(measurement, Err(MeasurementError::FieldCount));
+    }
+
+    #[test]
+    fn measurement_bad_prefix() {
+        // `sha256` is not an identifier in the nih hash algorithm registry
+        let input = "sha256;1";
+        let measurement: Result<Measurement, _> = input.parse();
+
+        assert_eq!(
+            measurement,
+            Err(MeasurementError::UnsupportedAlg("sha256".to_string()))
+        );
+    }
+
+    #[test]
+    fn measurement_bad_hex() {
+        // hex strings must be an even length
+        let input = "sha-256;1";
+        let measurement: Result<Measurement, _> = input.parse();
+
+        assert_eq!(
+            measurement,
+            Err(MeasurementError::HexDecode(FromHexError::OddLength))
+        );
+    }
+
+    #[test]
+    fn measurement_bad_length() {
+        let input = "sha-256;11";
+        let measurement: Result<Measurement, _> = input.parse();
+
+        assert_eq!(measurement, Err(MeasurementError::BadLength));
+    }
+
+    #[test]
+    fn measurement_sha256() {
+        let digest_str =
+            "e6e5936d72eb137f9d4fea1f55080352cd16c9f0e98becedfaaeb10b2b4e6d30";
+        let expected = Measurement::Sha256(
+            hex::decode(digest_str)
+                .expect("bad hex string")
+                .try_into()
+                .expect("hex string wrong length"),
+        );
+        let input = format!("sha-256;{digest_str}");
+        let measurement: Result<Measurement, _> = input.parse();
+
+        assert_eq!(measurement, Ok(expected));
+    }
 }
