@@ -11,7 +11,8 @@ use sha2::{
 use std::{error, fmt, str};
 use uuid::Uuid;
 
-pub mod mock;
+mod rot;
+pub use rot::{VmInstanceRot, VmInstanceRotError};
 pub mod socket;
 #[cfg(feature = "vsock")]
 pub mod vsock;
@@ -167,7 +168,7 @@ pub enum Response {
 
 /// An interface for obtaining attestations and supporting data from the VM
 /// Instance RoT
-pub trait VmInstanceRot {
+pub trait VmInstanceAttester {
     type Error: error::Error + fmt::Debug;
 
     /// Get an attestation from each of the RoTs resident on the host platform
