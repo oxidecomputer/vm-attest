@@ -124,8 +124,8 @@ pub struct MeasurementLog {
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct VmInstanceConf {
     pub uuid: Uuid,
-    #[serde(rename = "image-digest")]
-    pub image_digest: Option<Measurement>,
+    #[serde(rename = "boot-digest")]
+    pub boot_digest: Option<Measurement>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
