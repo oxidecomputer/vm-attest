@@ -11,8 +11,9 @@ use std::{
 use vsock::{VsockListener, VsockStream};
 
 use crate::{
-    QualifyingData, Request, Response, VmInstanceAttestation, VmInstanceRot,
-    mock::{VmInstanceRotMock, VmInstanceRotMockError},
+    QualifyingData, Request, Response, VmInstanceAttestation,
+    VmInstanceAttester,
+    rot::{VmInstanceRot, VmInstanceRotError},
 };
 
 /// the maximum length of a message that we'll accept from clients
@@ -22,14 +23,14 @@ const MAX_LINE_LENGTH: usize = 1024;
 /// connections on a vsock. It receives JSON messages that encode the sole
 /// parameter to the `VmInstanceRot::attest` function.
 pub struct VmInstanceRotVsockServer {
-    mock: VmInstanceRotMock,
+    rot: VmInstanceRot,
     listener: VsockListener,
 }
 
 #[derive(Debug, thiserror::Error)]
 pub enum VmInstanceRotVsockError {
-    #[error("error from underlying VmInstanceRoT mock")]
-    MockRotError(#[from] VmInstanceRotMockError),
+    #[error("error from underlying VmInstanceRoT")]
+    MockRotError(#[from] VmInstanceRotError),
 
     #[error("error deserializing Command from JSON")]
     Request(serde_json::Error),
@@ -42,8 +43,8 @@ pub enum VmInstanceRotVsockError {
 }
 
 impl VmInstanceRotVsockServer {
-    pub fn new(mock: VmInstanceRotMock, listener: VsockListener) -> Self {
-        Self { mock, listener }
+    pub fn new(rot: VmInstanceRot, listener: VsockListener) -> Self {
+        Self { rot, listener }
     }
 
     // message handling loop
@@ -107,8 +108,8 @@ impl VmInstanceRotVsockServer {
                     Request::Attest(q) => {
                         debug!("qualifying data received: {q:?}");
                         // NOTE: We do not contribute to the `QualifyingData`
-                        // here. The self.mock impl will handle this for us.
-                        match self.mock.attest(&q) {
+                        // here. The self.rot impl will handle this for us.
+                        match self.rot.attest(&q) {
                             Ok(a) => Response::Attest(a),
                             Err(e) => Response::Error(e.to_string()),
                         }
@@ -154,7 +155,7 @@ pub enum VmInstanceRotVsockClientError {
     VmInstanceRotError(String),
 }
 
-impl VmInstanceRot for VmInstanceRotVsockClient {
+impl VmInstanceAttester for VmInstanceRotVsockClient {
     type Error = VmInstanceRotVsockClientError;
 
     fn attest(

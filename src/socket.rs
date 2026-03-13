@@ -14,8 +14,9 @@ use std::{
 };
 
 use crate::{
-    QualifyingData, Request, Response, VmInstanceAttestation, VmInstanceRot,
-    mock::{VmInstanceRotMock, VmInstanceRotMockError},
+    QualifyingData, Request, Response, VmInstanceAttestation,
+    VmInstanceAttester,
+    rot::{VmInstanceRot, VmInstanceRotError},
 };
 
 /// the maximum length of a message that we'll accept from clients
@@ -52,7 +53,7 @@ pub enum VmInstanceRotSocketClientError {
     VmInstanceRot(String),
 }
 
-impl VmInstanceRot for VmInstanceRotSocketClient {
+impl VmInstanceAttester for VmInstanceRotSocketClient {
     type Error = VmInstanceRotSocketClientError;
 
     /// Turn the `QualifyingData` provided into a JSON message that we send
@@ -77,7 +78,6 @@ impl VmInstanceRot for VmInstanceRotSocketClient {
         reader.read_line(&mut response)?;
 
         debug!("got response: {response}");
-        // map `Response` to `Result<PlatformAttestation, Self::Error>`
         let response: Response = serde_json::from_str(&response)?;
         match response {
             Response::Attest(p) => Ok(p),
@@ -90,7 +90,7 @@ impl VmInstanceRot for VmInstanceRotSocketClient {
 /// `QualifyingData` from the `VmInstanceRotSocketClient`. The `QualifyingData`
 /// is then passed to an instance of the `VmInstanceRotMock`.
 pub struct VmInstanceRotSocketServer {
-    mock: VmInstanceRotMock,
+    rot: VmInstanceRot,
     listener: UnixListener,
 }
 
@@ -98,7 +98,7 @@ pub struct VmInstanceRotSocketServer {
 #[derive(Debug, thiserror::Error)]
 pub enum VmInstanceRotSocketRunError {
     #[error("error from underlying VmInstanceRoT mock")]
-    MockRotError(#[from] VmInstanceRotMockError),
+    MockRotError(#[from] VmInstanceRotError),
 
     #[error("failed to deserialize QualifyingData request from JSON")]
     Request(serde_json::Error),
@@ -111,8 +111,8 @@ pub enum VmInstanceRotSocketRunError {
 }
 
 impl VmInstanceRotSocketServer {
-    pub fn new(mock: VmInstanceRotMock, listener: UnixListener) -> Self {
-        Self { mock, listener }
+    pub fn new(rot: VmInstanceRot, listener: UnixListener) -> Self {
+        Self { rot, listener }
     }
 
     // message handling loop
@@ -175,8 +175,8 @@ impl VmInstanceRotSocketServer {
                     Request::Attest(q) => {
                         debug!("qualifying data received: {q:?}");
                         // NOTE: We do not contribute to the `QualifyingData`
-                        // here. The self.mock impl will handle this for us.
-                        match self.mock.attest(&q) {
+                        // here. The self.rot impl will handle this for us.
+                        match self.rot.attest(&q) {
                             Ok(a) => Response::Attest(a),
                             Err(e) => Response::Error(e.to_string()),
                         }
@@ -206,7 +206,7 @@ pub enum VmInstanceAttestDataResponse {
 
 /// Possible errors from `VmInstanceAttestSocketServer::run`
 #[derive(Debug, thiserror::Error)]
-pub enum VmInstanceTcpServerError<T: VmInstanceRot> {
+pub enum VmInstanceTcpServerError<T: VmInstanceAttester> {
     #[error("failed to deserialize QualifyingData request from JSON")]
     Request(serde_json::Error),
 
@@ -217,7 +217,7 @@ pub enum VmInstanceTcpServerError<T: VmInstanceRot> {
     Socket(#[from] std::io::Error),
 
     #[error("error from the underlying VmInstanceRot")]
-    VmInstanceRotError(<T as VmInstanceRot>::Error),
+    VmInstanceRotError(<T as VmInstanceAttester>::Error),
 }
 
 /// This type wraps a TcpListener accepting JSON encoded `QualifyingData` from
@@ -227,12 +227,12 @@ pub enum VmInstanceTcpServerError<T: VmInstanceRot> {
 /// This `QualifyingData` is then sent down to the `VmInstanceRot` by way of the
 /// `vm_instance_rot` member.
 #[derive(Debug)]
-pub struct VmInstanceTcpServer<T: VmInstanceRot> {
+pub struct VmInstanceTcpServer<T: VmInstanceAttester> {
     challenge_listener: TcpListener,
     vm_instance_rot: T,
 }
 
-impl<T: VmInstanceRot> VmInstanceTcpServer<T> {
+impl<T: VmInstanceAttester> VmInstanceTcpServer<T> {
     pub fn new(challenge_listener: TcpListener, vm_instance_rot: T) -> Self {
         Self {
             challenge_listener,

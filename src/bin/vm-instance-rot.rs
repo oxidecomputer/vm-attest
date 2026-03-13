@@ -11,7 +11,7 @@ use std::{fs, os::unix::net::UnixListener, path::PathBuf};
 use vsock::{VsockAddr, VsockListener};
 
 use vm_attest::{
-    VmInstanceConf, mock::VmInstanceRotMock, socket::VmInstanceRotSocketServer,
+    VmInstanceConf, VmInstanceRot, socket::VmInstanceRotSocketServer,
     vsock::VmInstanceRotVsockServer,
 };
 
@@ -83,7 +83,7 @@ fn main() -> Result<()> {
     debug!("creating instance of VmInstanceAttestMock");
     // instantiate an `AttestMock` w/ the Oxide platform RoT instance requested
     // by the caller & the config
-    let attest = VmInstanceRotMock::new(oxide_platform_rot, instance_cfg);
+    let rot = VmInstanceRot::new(oxide_platform_rot, instance_cfg);
 
     match args.socket_type {
         SocketType::Unix { sock } => {
@@ -96,7 +96,7 @@ fn main() -> Result<()> {
                 .context("failed to bind to socket")?;
             debug!("listening on socket file: {}", sock.display());
 
-            Ok(VmInstanceRotSocketServer::new(attest, listener).run()?)
+            Ok(VmInstanceRotSocketServer::new(rot, listener).run()?)
         }
         SocketType::Vsock { cid, port } => {
             debug!("binding to vsock cid:port: ({cid}, {port})");
@@ -104,7 +104,7 @@ fn main() -> Result<()> {
                 .with_context(|| format!("bind to cid,pid: ({cid},{port})"))?;
             debug!("listening on cid,port: ({cid},{port})");
 
-            Ok(VmInstanceRotVsockServer::new(attest, listener).run()?)
+            Ok(VmInstanceRotVsockServer::new(rot, listener).run()?)
         }
     }
 }
