@@ -11,16 +11,10 @@ test-data = []
 vsock = ["dep:vsock"]
 
 [dependencies]
-anyhow = "1.0.100"
 attest-data.git = "https://github.com/oxidecomputer/dice-util"
-cfg-if = "1.0.4"
-clap = { version = "4.5.53", features = ["derive"] }
-clap-verbosity = "2.1.0"
 const-oid = { version = "0.9.5", features = ["db"] }
-ctrlc = "3.5.1"
 dice-verifier = { git = "https://github.com/oxidecomputer/dice-util", features = ["ipcc", "mock"] }
 ed25519-dalek = { version = "2.1", default-features = false }
-env_logger = "0.11.8"
 getrandom = { version = "0.3.4", features = ["std"] }
 hex = "0.4.3"
 hubpack = "0.1.2"
@@ -41,18 +35,3 @@ anyhow.version = "1.0.100"
 
 [dev-dependencies]
 vm-attest = { path = ".", features = ["test-data"] }
-
-[[bin]]
-name = "appraiser"
-path = "src/bin/appraiser.rs"
-required-features = ["vsock"]
-
-[[bin]]
-name = "vm-instance"
-path = "src/bin/vm-instance.rs"
-required-features = ["vsock"]
-
-[[bin]]
-name = "vm-instance-rot"
-path = "src/bin/vm-instance-rot.rs"
-required-features = ["vsock"]
