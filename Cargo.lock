@@ -83,7 +83,7 @@ dependencies = [
  "serde_with",
  "sha3",
  "static_assertions",
- "thiserror 2.0.17",
+ "thiserror",
 ]
 
 [[package]]
@@ -395,13 +395,12 @@ dependencies = [
  "env_logger",
  "hex",
  "hubpack",
- "libipcc",
  "log",
  "p384",
  "rats-corim",
  "sha3",
  "tempfile",
- "thiserror 2.0.17",
+ "thiserror",
  "x509-cert",
 ]
 
@@ -767,16 +766,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bcc35a38544a891a5f7c865aca548a982ccb3b8650a5b06d0fd33a10283c56fc"
 
 [[package]]
-name = "libipcc"
-version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/ipcc-rs?rev=7cdf2ab9c8d9e9267a8b366aa780c6c26f9a5ecf#7cdf2ab9c8d9e9267a8b366aa780c6c26f9a5ecf"
-dependencies = [
- "cfg-if",
- "libc",
- "thiserror 1.0.69",
-]
-
-[[package]]
 name = "linux-raw-sys"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -934,7 +923,7 @@ dependencies = [
  "serde",
  "serde_with",
  "strum",
- "thiserror 2.0.17",
+ "thiserror",
 ]
 
 [[package]]
@@ -1262,31 +1251,11 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "1.0.69"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52"
-dependencies = [
- "thiserror-impl 1.0.69",
-]
-
-[[package]]
-name = "thiserror"
 version = "2.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f63587ca0f12b72a0600bcba1d40081f830876000bb46dd2337a3051618f4fc8"
 dependencies = [
- "thiserror-impl 2.0.17",
-]
-
-[[package]]
-name = "thiserror-impl"
-version = "1.0.69"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.110",
+ "thiserror-impl",
 ]
 
 [[package]]
@@ -1406,7 +1375,7 @@ dependencies = [
  "serde_json",
  "serde_with",
  "sha2",
- "thiserror 2.0.17",
+ "thiserror",
  "uuid",
  "vm-attest",
  "vsock",
