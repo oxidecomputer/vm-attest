@@ -72,7 +72,7 @@ pub enum MeasurementError {
 /// from the IANA Named Information Hash Algorithm Registry:
 /// https://www.iana.org/assignments/named-information/named-information.xhtml
 #[serde_as]
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Measurement {
     #[serde(rename = "sha-256")]
     Sha256(#[serde_as(as = "Hex")] [u8; SHA256_DIGEST_LENGTH]),
@@ -121,7 +121,7 @@ pub struct MeasurementLog {
 /// A representation of the measurement log produced by the VM instance RoT.
 /// This is the log of measurements that propolis mixes into the data provided
 /// to the attestation produced by the `RotType::OxidePlatform`.
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct VmInstanceConf {
     pub uuid: Uuid,
     #[serde(rename = "boot-digest")]
