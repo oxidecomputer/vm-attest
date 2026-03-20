@@ -39,6 +39,8 @@ pub struct VmInstanceRot {
     log: VmInstanceConf,
 }
 
+unsafe impl Send for VmInstanceRot {}
+
 impl VmInstanceRot {
     pub fn new(oxattest_mock: Box<dyn OxAttest>, log: VmInstanceConf) -> Self {
         Self { oxattest_mock, log }
