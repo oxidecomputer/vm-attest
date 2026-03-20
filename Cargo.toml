@@ -13,7 +13,7 @@ vsock = ["dep:vsock"]
 [dependencies]
 attest-data.git = "https://github.com/oxidecomputer/dice-util"
 const-oid = { version = "0.9.5", features = ["db"] }
-dice-verifier = { git = "https://github.com/oxidecomputer/dice-util", features = ["ipcc", "mock"] }
+dice-verifier = { git = "https://github.com/oxidecomputer/dice-util", features = ["mock"] }
 ed25519-dalek = { version = "2.1", default-features = false }
 getrandom = { version = "0.3.4", features = ["std"] }
 hex = "0.4.3"
