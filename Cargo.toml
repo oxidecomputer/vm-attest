@@ -6,9 +6,7 @@ license = "MPL-2.0"
 build = "build/main.rs"
 
 [features]
-default = ["vsock"]
 test-data = []
-vsock = ["dep:vsock"]
 
 [dependencies]
 attest-data.git = "https://github.com/oxidecomputer/dice-util"
@@ -27,7 +25,6 @@ serde_with = { version = "3.16.1", features = ["hex"] }
 sha2 = "0.10.9"
 thiserror = "2.0.17"
 uuid = { version = "1.18.1", features = ["std", "serde"] }
-vsock = { version = "0.5.2", optional = true }
 x509-cert = "0.2.5"
 
 [build-dependencies]

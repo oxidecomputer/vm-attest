@@ -13,9 +13,6 @@ use uuid::Uuid;
 
 mod rot;
 pub use rot::{VmInstanceRot, VmInstanceRotError};
-pub mod socket;
-#[cfg(feature = "vsock")]
-pub mod vsock;
 
 const SHA256_DIGEST_LENGTH: usize =
     <Sha256 as OutputSizeUser>::OutputSize::USIZE;
