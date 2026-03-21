@@ -35,14 +35,15 @@ pub enum VmInstanceRotError {
 
 /// This type mocks the `propolis` process that backs a VM.
 pub struct VmInstanceRot {
-    oxattest_mock: Box<dyn OxAttest>,
+    oxattest_mock: Box<dyn OxAttest + Send>,
     log: VmInstanceConf,
 }
 
-unsafe impl Send for VmInstanceRot {}
-
 impl VmInstanceRot {
-    pub fn new(oxattest_mock: Box<dyn OxAttest>, log: VmInstanceConf) -> Self {
+    pub fn new(
+        oxattest_mock: Box<dyn OxAttest + Send>,
+        log: VmInstanceConf,
+    ) -> Self {
         Self { oxattest_mock, log }
     }
 }
