@@ -40,7 +40,10 @@ pub struct VmInstanceRot {
 }
 
 impl VmInstanceRot {
-    pub fn new(oxattest_mock: Box<dyn OxAttest + Send>, log: VmInstanceConf) -> Self {
+    pub fn new(
+        oxattest_mock: Box<dyn OxAttest + Send>,
+        log: VmInstanceConf,
+    ) -> Self {
         Self { oxattest_mock, log }
     }
 }
