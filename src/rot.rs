@@ -13,7 +13,7 @@ use x509_cert::der::Encode;
 
 use crate::{
     MeasurementLog, QualifyingData, RotType, VmInstanceAttestation,
-    VmInstanceAttester, VmInstanceConf,
+    VmInstanceConf,
 };
 
 /// Errors returned when trying to sign an attestation
@@ -33,29 +33,35 @@ pub enum VmInstanceRotError {
     VmInstanceMocData(#[from] serde_json::Error),
 }
 
-/// This type mocks the `propolis` process that backs a VM.
+/// This type represents the `propolis` process that backs a VM. This type has
+/// an interface similar to the `vm_attest::VmInstanceAttester` but we require
 pub struct VmInstanceRot {
     oxattest_mock: Box<dyn OxAttest + Send>,
 }
 
 impl VmInstanceRot {
+    /// Create an instance of the `VmInstanceRot` type. A `Box`ed type
+    /// implementing the dice_verifier::Attest is provided to the constructor.
+    /// This type connects the `VmInstanceRot` to the oxide platform rot, or
+    /// possibly a mock implementation thereof.
     pub fn new(oxattest_mock: Box<dyn OxAttest + Send>) -> Self {
         Self { oxattest_mock }
     }
-}
 
-impl VmInstanceAttester for VmInstanceRot {
-    type Error = VmInstanceRotError;
-
-    /// `propolis` receives qualifying data from the caller. It then combines
-    /// this data w/ attributes describing the VM (rootfs, instance UUID etc)
-    /// and attestations from other RoTs on the platform. The format of each
-    /// attestation is dependent on the associated `RotType`.
-    fn attest(
+    /// Acting as the VmInstanceRot `propolis` receives:
+    /// - qualifying data from the caller
+    /// - a `VmInstanceConf` structure describing the Vm being executed
+    ///
+    /// It then combines this data using a `Sha256` digest and provides the
+    /// output to the oxide platform Rot as qualifying data. The resultant
+    /// attestation from the platform rot is then combined with all data
+    /// required to verify it in a `VmInstanceAttestation` and returned to the
+    /// caller.
+    pub fn attest(
         &self,
         instance_conf: &VmInstanceConf,
         qualifying_data: &QualifyingData,
-    ) -> Result<VmInstanceAttestation, Self::Error> {
+    ) -> Result<VmInstanceAttestation, VmInstanceRotError> {
         let instance_conf =
             serde_json::to_string(instance_conf)?.as_bytes().to_vec();
 
@@ -74,7 +80,7 @@ impl VmInstanceAttester for VmInstanceRot {
         // TODO: this should be a JSON encoding
         let mut attestation = vec![0u8; OxAttestation::MAX_SIZE];
         let len = hubpack::serialize(&mut attestation, &attest)
-            .map_err(|_| Self::Error::Serialize)?;
+            .map_err(|_| VmInstanceRotError::Serialize)?;
         attestation.truncate(len);
 
         // collect logs
@@ -82,7 +88,7 @@ impl VmInstanceAttester for VmInstanceRot {
 
         let mut data = vec![0u8; Log::MAX_SIZE];
         let len = hubpack::serialize(&mut data, &oxide_log)
-            .map_err(|_| Self::Error::Serialize)?;
+            .map_err(|_| VmInstanceRotError::Serialize)?;
         data.truncate(len);
 
         let mut measurement_logs = Vec::new();

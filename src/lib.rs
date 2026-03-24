@@ -172,7 +172,6 @@ pub trait VmInstanceAttester {
     /// qualified by the provided `QualifyingData`.
     fn attest(
         &self,
-        instance_conf: &VmInstanceConf,
         qualifying_data: &QualifyingData,
     ) -> Result<VmInstanceAttestation, Self::Error>;
 }
