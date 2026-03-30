@@ -4,7 +4,7 @@
 
 use attest_data::AttestDataError as OxAttestDataError;
 use dice_verifier::{
-    Attest as OxAttest, AttestError as OxAttestError,
+    AttestAsync as OxAttest, AttestError as OxAttestError,
     Attestation as OxAttestation, Log, Nonce,
 };
 use hubpack::SerializedSize;
@@ -57,7 +57,7 @@ impl VmInstanceRot {
     /// attestation from the platform rot is then combined with all data
     /// required to verify it in a `VmInstanceAttestation` and returned to the
     /// caller.
-    pub fn attest(
+    pub async fn attest(
         &self,
         instance_conf: &VmInstanceConf,
         qualifying_data: &QualifyingData,
@@ -74,7 +74,7 @@ impl VmInstanceRot {
         // smuggle the updated qualifying data through the `Nonce`
         // type down to the Oxide Platform RoT
         let nonce = Nonce::N32(attest_data::Array(msg.finalize().into()));
-        let attest = self.oxattest_mock.attest(&nonce)?;
+        let attest = self.oxattest_mock.attest(&nonce).await?;
 
         // serialize the attestation back to hubpack
         // TODO: this should be a JSON encoding
@@ -84,7 +84,7 @@ impl VmInstanceRot {
         attestation.truncate(len);
 
         // collect logs
-        let oxide_log = self.oxattest_mock.get_measurement_log()?;
+        let oxide_log = self.oxattest_mock.get_measurement_log().await?;
 
         let mut data = vec![0u8; Log::MAX_SIZE];
         let len = hubpack::serialize(&mut data, &oxide_log)
@@ -101,7 +101,7 @@ impl VmInstanceRot {
         });
 
         // get cert chain
-        let ox_cert_chain = self.oxattest_mock.get_certificates()?;
+        let ox_cert_chain = self.oxattest_mock.get_certificates().await?;
 
         let mut cert_chain = Vec::new();
         for cert in ox_cert_chain {

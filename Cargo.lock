@@ -68,9 +68,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
 
 [[package]]
+name = "async-trait"
+version = "0.1.89"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9035ad2d096bed7955a320ee7e2230574d28fd3c3a0f186cbea1ff3c7eed5dbb"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.110",
+]
+
+[[package]]
 name = "attest-data"
 version = "0.5.0"
-source = "git+https://github.com/oxidecomputer/dice-util#88c6684d15f6f64abf7cdb843daa3862c253be80"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=d07ea05118e31c2d4c939e24b92440113f22da56#d07ea05118e31c2d4c939e24b92440113f22da56"
 dependencies = [
  "const-oid",
  "der",
@@ -381,8 +392,9 @@ dependencies = [
 [[package]]
 name = "dice-verifier"
 version = "0.3.0-pre0"
-source = "git+https://github.com/oxidecomputer/dice-util#88c6684d15f6f64abf7cdb843daa3862c253be80"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=d07ea05118e31c2d4c939e24b92440113f22da56#d07ea05118e31c2d4c939e24b92440113f22da56"
 dependencies = [
+ "async-trait",
  "attest-data",
  "const-oid",
  "ed25519-dalek",
@@ -393,6 +405,7 @@ dependencies = [
  "p384",
  "rats-corim",
  "sha3",
+ "slog",
  "tempfile",
  "thiserror",
  "x509-cert",
@@ -1125,6 +1138,15 @@ checksum = "77549399552de45a898a580c1b41d445bf730df867cc44e6c0233bbc4b8329de"
 dependencies = [
  "digest",
  "rand_core",
+]
+
+[[package]]
+name = "slog"
+version = "2.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9b3b8565691b22d2bdfc066426ed48f837fc0c5f2c8cad8d9718f7f99d6995c1"
+dependencies = [
+ "rustversion",
 ]
 
 [[package]]
