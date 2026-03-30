@@ -10,8 +10,8 @@ test-data = []
 
 [dependencies]
 # these dependencies both come from the `dice-util` repo and should be pinned to the same git rev.
-attest-data = { git = "https://github.com/oxidecomputer/dice-util", rev = "c008287fb6c62654094d9d145ba9d08d90dcf811" }
-dice-verifier = { git = "https://github.com/oxidecomputer/dice-util", rev = "c008287fb6c62654094d9d145ba9d08d90dcf811", features = ["mock"] }
+attest-data = { git = "https://github.com/oxidecomputer/dice-util", rev = "d7c69095ada89e6d26d26ef8eadc108ed486a110" }
+dice-verifier = { git = "https://github.com/oxidecomputer/dice-util", rev = "d7c69095ada89e6d26d26ef8eadc108ed486a110", features = ["mock"] }
 
 const-oid = { version = "0.9.5", features = ["db"] }
 ed25519-dalek = { version = "2.1", default-features = false }

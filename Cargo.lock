@@ -81,7 +81,7 @@ dependencies = [
 [[package]]
 name = "attest-data"
 version = "0.5.0"
-source = "git+https://github.com/oxidecomputer/dice-util?rev=c008287fb6c62654094d9d145ba9d08d90dcf811#c008287fb6c62654094d9d145ba9d08d90dcf811"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=d7c69095ada89e6d26d26ef8eadc108ed486a110#d7c69095ada89e6d26d26ef8eadc108ed486a110"
 dependencies = [
  "const-oid",
  "der",
@@ -398,7 +398,7 @@ dependencies = [
 [[package]]
 name = "dice-verifier"
 version = "0.3.0-pre0"
-source = "git+https://github.com/oxidecomputer/dice-util?rev=c008287fb6c62654094d9d145ba9d08d90dcf811#c008287fb6c62654094d9d145ba9d08d90dcf811"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=d7c69095ada89e6d26d26ef8eadc108ed486a110#d7c69095ada89e6d26d26ef8eadc108ed486a110"
 dependencies = [
  "async-trait",
  "attest-data",
@@ -414,6 +414,7 @@ dependencies = [
  "slog",
  "tempfile",
  "thiserror",
+ "tokio",
  "x509-cert",
 ]
 
