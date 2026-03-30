@@ -174,18 +174,19 @@ mod test {
         QualifyingData::from(Into::<[u8; 32]>::into(digest.finalize()))
     }
 
-    #[test]
-    fn attest() {
+    #[tokio::test]
+    async fn attest() {
         let (attest, instance_cfg) = setup();
         let qualifying_data = mock_qualifying_data();
 
         let _ = attest
             .attest(&instance_cfg, &qualifying_data)
+            .await
             .expect("VmInstanceRotMock attest");
     }
 
-    #[test]
-    fn verify_cert_chain() {
+    #[tokio::test]
+    async fn verify_cert_chain() {
         use std::fs;
 
         let (attest, instance_cfg) = setup();
@@ -193,6 +194,7 @@ mod test {
 
         let plat_attest = attest
             .attest(&instance_cfg, &qualifying_data)
+            .await
             .expect("VmInstanceRotMock attest");
 
         let root_cert = fs::read(config::PKI_ROOT).unwrap_or_else(|e| {
@@ -218,14 +220,15 @@ mod test {
         assert_eq!(&root_cert[0], verified_root);
     }
 
-    #[test]
-    fn verify_attestation() {
+    #[tokio::test]
+    async fn verify_attestation() {
         let (attest, instance_cfg) = setup();
         // qualifying data from VM to VmInstanceRot
         let vm_qualifying_data = mock_qualifying_data();
 
         let plat_attest = attest
             .attest(&instance_cfg, &vm_qualifying_data)
+            .await
             .expect("VmInstanceRotMock get_cert_chain");
 
         // Reconstruct the 32 bytes passed from `VmInstanceAttestMock` down to
@@ -284,8 +287,8 @@ mod test {
         assert!(result.is_ok());
     }
 
-    #[test]
-    fn appraise_log() {
+    #[tokio::test]
+    async fn appraise_log() {
         use dice_verifier::{MeasurementSet, ReferenceMeasurements};
         use rats_corim::Corim;
 
@@ -299,6 +302,7 @@ mod test {
 
         let plat_attest = attest
             .attest(&instance_cfg, &qualifying_data)
+            .await
             .expect("VmInstanceRotMock get_cert_chain");
 
         // construct a `VmInstanceConf` from test data

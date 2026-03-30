@@ -34,3 +34,4 @@ anyhow.version = "1.0.100"
 
 [dev-dependencies]
 vm-attest = { path = ".", features = ["test-data"] }
+tokio = { version = "1", features = ["full"] }
