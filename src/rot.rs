@@ -36,7 +36,7 @@ pub enum VmInstanceRotError {
 /// This type represents the `propolis` process that backs a VM. This type has
 /// an interface similar to the `vm_attest::VmInstanceAttester` but we require
 pub struct VmInstanceRot {
-    oxattest_mock: Box<dyn OxAttest + Send>,
+    oxattest_mock: Box<dyn OxAttest + Send + Sync>,
 }
 
 impl VmInstanceRot {
@@ -44,7 +44,7 @@ impl VmInstanceRot {
     /// implementing the dice_verifier::Attest is provided to the constructor.
     /// This type connects the `VmInstanceRot` to the oxide platform rot, or
     /// possibly a mock implementation thereof.
-    pub fn new(oxattest_mock: Box<dyn OxAttest + Send>) -> Self {
+    pub fn new(oxattest_mock: Box<dyn OxAttest + Send + Sync>) -> Self {
         Self { oxattest_mock }
     }
 
