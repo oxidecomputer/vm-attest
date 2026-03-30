@@ -4,7 +4,7 @@
 
 use attest_data::AttestDataError as OxAttestDataError;
 use dice_verifier::{
-    AttestAsync as OxAttest, AttestError as OxAttestError,
+    Attest as OxAttest, AttestError as OxAttestError,
     Attestation as OxAttestation, Log, Nonce,
 };
 use hubpack::SerializedSize;
