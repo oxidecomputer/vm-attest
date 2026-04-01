@@ -98,6 +98,7 @@ pub fn generate() -> Result<()> {
         .with_context(|| format!("creating {}", out.display()))?;
     out.pop();
 
+    cwd.pop();
     cwd.push("test-data");
     cwd.push("config.kdl");
     let mut pki_cfg = cwd;
