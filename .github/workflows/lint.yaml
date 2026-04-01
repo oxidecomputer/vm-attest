@@ -27,3 +27,13 @@ jobs:
         with:
           components: rustfmt
       - run: cargo fmt --check
+  shellcheck:
+    name: Run ShellCheck
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Required to checkout the repository
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master

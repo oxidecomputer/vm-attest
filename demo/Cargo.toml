@@ -1,0 +1,23 @@
+[package]
+name = "vm-attest-demo"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow.workspace = true
+attest-data.workspace = true
+clap = { workspace = true, features = ["derive"] }
+clap-verbosity.workspace = true
+const-oid = { workspace = true, features = ["db"] }
+dice-verifier = { workspace = true, features = ["ipcc", "mock"] }
+env_logger.workspace = true
+hubpack.workspace = true
+libc.workspace = true
+log.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+vm-attest.path = "../vm-attest"
+vsock.workspace = true
+x509-cert.workspace = true
