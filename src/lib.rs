@@ -121,6 +121,8 @@ pub struct MeasurementLog {
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct VmInstanceConf {
     pub uuid: Uuid,
+    pub project: Uuid,
+    pub silo: Uuid,
     #[serde(rename = "boot-digest")]
     pub boot_digest: Option<Measurement>,
 }
