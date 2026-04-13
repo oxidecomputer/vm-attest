@@ -36,7 +36,7 @@ pub enum VmInstanceRotError {
 /// This type represents the `propolis` process that backs a VM. This type has
 /// an interface similar to the `vm_attest::VmInstanceAttester` but we require
 pub struct VmInstanceRot {
-    oxattest_mock: Box<dyn OxAttest + Send>,
+    oxattest_mock: Box<dyn OxAttest + Send + Sync>,
 }
 
 impl VmInstanceRot {
@@ -44,7 +44,7 @@ impl VmInstanceRot {
     /// implementing the dice_verifier::Attest is provided to the constructor.
     /// This type connects the `VmInstanceRot` to the oxide platform rot, or
     /// possibly a mock implementation thereof.
-    pub fn new(oxattest_mock: Box<dyn OxAttest + Send>) -> Self {
+    pub fn new(oxattest_mock: Box<dyn OxAttest + Send + Sync>) -> Self {
         Self { oxattest_mock }
     }
 
@@ -57,7 +57,7 @@ impl VmInstanceRot {
     /// attestation from the platform rot is then combined with all data
     /// required to verify it in a `VmInstanceAttestation` and returned to the
     /// caller.
-    pub fn attest(
+    pub async fn attest(
         &self,
         instance_conf: &VmInstanceConf,
         qualifying_data: &QualifyingData,
@@ -74,7 +74,7 @@ impl VmInstanceRot {
         // smuggle the updated qualifying data through the `Nonce`
         // type down to the Oxide Platform RoT
         let nonce = Nonce::N32(attest_data::Array(msg.finalize().into()));
-        let attest = self.oxattest_mock.attest(&nonce)?;
+        let attest = self.oxattest_mock.attest(&nonce).await?;
 
         // serialize the attestation back to hubpack
         // TODO: this should be a JSON encoding
@@ -84,7 +84,7 @@ impl VmInstanceRot {
         attestation.truncate(len);
 
         // collect logs
-        let oxide_log = self.oxattest_mock.get_measurement_log()?;
+        let oxide_log = self.oxattest_mock.get_measurement_log().await?;
 
         let mut data = vec![0u8; Log::MAX_SIZE];
         let len = hubpack::serialize(&mut data, &oxide_log)
@@ -101,7 +101,7 @@ impl VmInstanceRot {
         });
 
         // get cert chain
-        let ox_cert_chain = self.oxattest_mock.get_certificates()?;
+        let ox_cert_chain = self.oxattest_mock.get_certificates().await?;
 
         let mut cert_chain = Vec::new();
         for cert in ox_cert_chain {
@@ -174,18 +174,19 @@ mod test {
         QualifyingData::from(Into::<[u8; 32]>::into(digest.finalize()))
     }
 
-    #[test]
-    fn attest() {
+    #[tokio::test]
+    async fn attest() {
         let (attest, instance_cfg) = setup();
         let qualifying_data = mock_qualifying_data();
 
         let _ = attest
             .attest(&instance_cfg, &qualifying_data)
+            .await
             .expect("VmInstanceRotMock attest");
     }
 
-    #[test]
-    fn verify_cert_chain() {
+    #[tokio::test]
+    async fn verify_cert_chain() {
         use std::fs;
 
         let (attest, instance_cfg) = setup();
@@ -193,6 +194,7 @@ mod test {
 
         let plat_attest = attest
             .attest(&instance_cfg, &qualifying_data)
+            .await
             .expect("VmInstanceRotMock attest");
 
         let root_cert = fs::read(config::PKI_ROOT).unwrap_or_else(|e| {
@@ -218,14 +220,15 @@ mod test {
         assert_eq!(&root_cert[0], verified_root);
     }
 
-    #[test]
-    fn verify_attestation() {
+    #[tokio::test]
+    async fn verify_attestation() {
         let (attest, instance_cfg) = setup();
         // qualifying data from VM to VmInstanceRot
         let vm_qualifying_data = mock_qualifying_data();
 
         let plat_attest = attest
             .attest(&instance_cfg, &vm_qualifying_data)
+            .await
             .expect("VmInstanceRotMock get_cert_chain");
 
         // Reconstruct the 32 bytes passed from `VmInstanceAttestMock` down to
@@ -284,8 +287,8 @@ mod test {
         assert!(result.is_ok());
     }
 
-    #[test]
-    fn appraise_log() {
+    #[tokio::test]
+    async fn appraise_log() {
         use dice_verifier::{MeasurementSet, ReferenceMeasurements};
         use rats_corim::Corim;
 
@@ -299,6 +302,7 @@ mod test {
 
         let plat_attest = attest
             .attest(&instance_cfg, &qualifying_data)
+            .await
             .expect("VmInstanceRotMock get_cert_chain");
 
         // construct a `VmInstanceConf` from test data

@@ -9,9 +9,11 @@ build = "build/main.rs"
 test-data = []
 
 [dependencies]
-attest-data.git = "https://github.com/oxidecomputer/dice-util"
+# these dependencies both come from the `dice-util` repo and should be pinned to the same git rev.
+attest-data = { git = "https://github.com/oxidecomputer/dice-util", rev = "1d3084b514389847e8e0f5d966d2be4f18d02d32" }
+dice-verifier = { git = "https://github.com/oxidecomputer/dice-util", rev = "1d3084b514389847e8e0f5d966d2be4f18d02d32", features = ["mock"] }
+
 const-oid = { version = "0.9.5", features = ["db"] }
-dice-verifier = { git = "https://github.com/oxidecomputer/dice-util", features = ["mock"] }
 ed25519-dalek = { version = "2.1", default-features = false }
 getrandom = { version = "0.3.4", features = ["std"] }
 hex = "0.4.3"
@@ -32,3 +34,4 @@ anyhow.version = "1.0.100"
 
 [dev-dependencies]
 vm-attest = { path = ".", features = ["test-data"] }
+tokio = { version = "1", features = ["full"] }
