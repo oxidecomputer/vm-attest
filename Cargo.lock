@@ -81,7 +81,7 @@ dependencies = [
 [[package]]
 name = "attest-data"
 version = "0.5.0"
-source = "git+https://github.com/oxidecomputer/dice-util?rev=1d3084b514389847e8e0f5d966d2be4f18d02d32#1d3084b514389847e8e0f5d966d2be4f18d02d32"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=d7472bfa91aee859c3fe0bdc1dbb1e320285228e#d7472bfa91aee859c3fe0bdc1dbb1e320285228e"
 dependencies = [
  "const-oid",
  "der",
@@ -398,7 +398,7 @@ dependencies = [
 [[package]]
 name = "dice-verifier"
 version = "0.3.0-pre0"
-source = "git+https://github.com/oxidecomputer/dice-util?rev=1d3084b514389847e8e0f5d966d2be4f18d02d32#1d3084b514389847e8e0f5d966d2be4f18d02d32"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=d7472bfa91aee859c3fe0bdc1dbb1e320285228e#d7472bfa91aee859c3fe0bdc1dbb1e320285228e"
 dependencies = [
  "async-trait",
  "attest-data",
