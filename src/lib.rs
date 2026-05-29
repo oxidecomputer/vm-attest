@@ -155,6 +155,10 @@ pub struct VmInstanceAttestation {
 #[derive(Debug, Deserialize, Serialize)]
 pub enum Request {
     Attest(QualifyingData),
+    /// Request an Oxide instance-identity OIDC token. The provider (propolis)
+    /// orchestrates the nonce challenge, attestation, and token exchange with
+    /// the control plane on the guest's behalf; the guest supplies nothing.
+    GetToken,
 }
 
 /// This enumeration represents the response message returned by the
@@ -162,6 +166,9 @@ pub enum Request {
 #[derive(Debug, Deserialize, Serialize)]
 pub enum Response {
     Attest(VmInstanceAttestation),
+    /// A signed Oxide instance-identity token (JWT), in response to
+    /// `Request::GetToken`.
+    Token(String),
     Error(String),
 }
 
