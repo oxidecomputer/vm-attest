@@ -289,8 +289,7 @@ mod test {
 
     #[tokio::test]
     async fn appraise_log() {
-        use dice_verifier::{MeasurementSet, ReferenceMeasurements};
-        use rats_corim::Corim;
+        use dice_verifier::{Corim, MeasurementSet, ReferenceMeasurements};
 
         let (attest, instance_cfg) = setup();
         let qualifying_data = mock_qualifying_data();

@@ -4,69 +4,21 @@
 
 use anyhow::Result;
 use anyhow::{Context, anyhow};
+use attest_mock::{MockCorim, MockData, MockLog};
+use camino::Utf8PathBuf;
+use pki_playground::{OutputFileExistsBehavior, config};
 use std::env;
 use std::fs::{self, File};
 use std::io::Write;
-use std::path::{self, Path, PathBuf};
+use std::path::{Path, PathBuf};
 
-/// Execute one of the `pki-playground` commands to generate part of the PKI
-/// used for testing.
-fn pki_gen_cmd(command: &str, cfg: &Path) -> Result<()> {
-    if !fs::exists(cfg).with_context(|| {
-        format!("failed to determin if file exists: {}", cfg.display())
-    })? {
-        return Err(anyhow!("missing PKI config file: {}", cfg.display()));
-    }
+fn write_path_to_conf<P: AsRef<Path>>(
+    mut file: &File,
+    path: P,
+    name: &str,
+) -> Result<()> {
+    let path = path.as_ref();
 
-    let mut cmd = std::process::Command::new("pki-playground");
-    cmd.arg("--config");
-    cmd.arg(cfg);
-    cmd.arg(command);
-    let output = cmd
-        .output()
-        .context("executing command \"pki-playground\"")?;
-
-    if !output.status.success() {
-        let stdout = String::from_utf8(output.stdout)
-            .context("String from pki-playground stdout")?;
-        println!("stdout: {stdout}");
-        let stderr = String::from_utf8(output.stderr)
-            .context("String from pki-playground stderr")?;
-        println!("stderr: {stderr}");
-
-        return Err(anyhow!("cmd failed: {cmd:?}"));
-    }
-
-    Ok(())
-}
-
-/// Execute one of the `attest-mock` commands to generate mock input data used
-/// for testing.
-fn attest_gen_cmd(command: &str, input: &Path, output: &str) -> Result<()> {
-    if !fs::exists(input).with_context(|| {
-        format!("failed to determin if file exists: {}", input.display())
-    })? {
-        return Err(anyhow!("missing config file: {}", input.display()));
-    }
-
-    // attest-mock "input" "cmd" > "output"
-    let mut cmd = std::process::Command::new("attest-mock");
-    cmd.arg(input).arg(command);
-    let cmd_output =
-        cmd.output().context("executing command \"attest-mock\"")?;
-
-    if cmd_output.status.success() {
-        std::fs::write(output, cmd_output.stdout).context("write {output}")
-    } else {
-        let stderr = String::from_utf8(cmd_output.stderr)
-            .context("String from attest-mock stderr")?;
-        println!("stderr: {stderr}");
-
-        Err(anyhow!("cmd failed: {cmd:?}"))
-    }
-}
-
-fn write_path_to_conf(mut file: &File, path: &Path, name: &str) -> Result<()> {
     if !fs::exists(path).with_context(|| {
         format!("checking existance of file: {}", path.display())
     })? {
@@ -81,16 +33,24 @@ fn write_path_to_conf(mut file: &File, path: &Path, name: &str) -> Result<()> {
     )?)
 }
 
-pub fn generate() -> Result<()> {
-    let cwd = env::current_dir().context("get current dir")?;
-    let mut cwd = path::absolute(cwd).context("current_dir to absolute")?;
+fn mock_data<R: MockData, P: AsRef<Path>>(input: P, output: P) -> Result<()>
+where
+    <R as MockData>::Error: std::error::Error + Send + Sync + 'static,
+{
+    let input = input.as_ref();
+    let output = output.as_ref();
 
-    // output directory where we put:
-    // generated test inputs
+    let mock = R::load(input)?;
+    let log = mock.to_bytes()?;
+    Ok(std::fs::write(output, &log).with_context(|| {
+        format!("write mock measurement log to file: {}", output.display())
+    })?)
+}
+
+pub fn generate() -> Result<()> {
+    // output directory where we put generated test inputs
     let mut out =
         PathBuf::from(env::var("OUT_DIR").context("Could not get OUT_DIR")?);
-    env::set_current_dir(&out)
-        .with_context(|| format!("chdir to {}", out.display()))?;
 
     // paths consumed by the library as const `&str`s go here
     out.push("config.rs");
@@ -98,61 +58,75 @@ pub fn generate() -> Result<()> {
         .with_context(|| format!("creating {}", out.display()))?;
     out.pop();
 
-    cwd.push("test-data");
-    cwd.push("config.kdl");
-    let mut pki_cfg = cwd;
-    // generate keys
-    pki_gen_cmd("generate-key-pairs", &pki_cfg)?;
+    // directory hosting test input data
+    let mut test_data = PathBuf::from(
+        env::var("CARGO_MANIFEST_DIR")
+            .context("Failed to get CARGO_MANIFEST_DIR")?,
+    );
+    test_data.push("test-data");
+
+    // load pki-playground config
+    test_data.push("config.kdl");
+    let tmp = Utf8PathBuf::try_from(test_data.clone())
+        .context("limit path to UTF8 character set for pki-playground")?;
+    let doc = config::load_and_validate(&tmp).map_err(|e| {
+        anyhow!(
+            "Load pki-playground config from \"{}\" failed: {e:?}",
+            test_data.display()
+        )
+    })?;
+    test_data.pop();
+
+    // generate keys & record the path to `alias` key for the tests mocking an
+    // attestation signer
+    doc.write_key_pairs(&out, OutputFileExistsBehavior::Skip)
+        .map_err(|e| anyhow!("writing key pairs failed: {e:?}"))?;
     out.push("test-alias.key.pem");
     write_path_to_conf(&config_out, &out, "ATTESTATION_SIGNER")
         .context("write variable w/ path to attestation signing key")?;
     out.pop();
 
-    // generate certs
-    pki_gen_cmd("generate-certificates", &pki_cfg)?;
+    // generate certs & record the path to the PKI root cert for tests that
+    // validate the cert chain
+    doc.write_certificates(&out, OutputFileExistsBehavior::Skip)
+        .map_err(|e| anyhow!("writing certificates failed: {e:?}"))?;
     out.push("test-root.cert.pem");
     write_path_to_conf(&config_out, &out, "PKI_ROOT")
         .context("write PKI_ROOT const str to config.rs")?;
     out.pop();
 
-    // generate cert chains
-    pki_gen_cmd("generate-certificate-lists", &pki_cfg)?;
-    pki_cfg.pop();
+    // generate cert chains & record the path to the attestation signer cert
+    // chain
+    doc.write_certificate_lists(&out, OutputFileExistsBehavior::Skip)
+        .map_err(|e| anyhow!("writing certificate lists failed: {e:?}"))?;
     out.push("test-alias.certlist.pem");
     write_path_to_conf(&config_out, &out, "SIGNER_PKIPATH")
         .context("write variable w/ path to attestation signing key")?;
     out.pop();
 
-    // generate measurement log
-    let mut log_cfg = pki_cfg;
-    log_cfg.push("log.kdl");
-    attest_gen_cmd("log", &log_cfg, "log.bin")?;
-    log_cfg.pop();
-
+    // generate measurement log & record its path
+    test_data.push("log.kdl");
     out.push("log.bin");
+    mock_data::<MockLog, _>(&test_data, &out)?;
     write_path_to_conf(&config_out, &out, "LOG")
         .context("write variable w/ path to attestation signing key")?;
     out.pop();
+    test_data.pop();
 
-    // generate the corpus of reference measurements
-    let mut corim_cfg = log_cfg;
-    corim_cfg.push("corim.kdl");
-    attest_gen_cmd("corim", &corim_cfg, "corim.cbor")?;
-    corim_cfg.pop();
-
+    // generate the corpus of reference measurements & record its path
+    test_data.push("corim.kdl");
     out.push("corim.cbor");
+    mock_data::<MockCorim, _>(&test_data, &out)?;
     write_path_to_conf(&config_out, &out, "CORIM").context(
         "write variable w/ path to reference integrity measurements",
     )?;
-    out.pop();
+    test_data.pop();
 
-    let mut vm_instance_cfg = corim_cfg;
-    vm_instance_cfg.push("vm-instance-cfg.json");
-    write_path_to_conf(&config_out, &vm_instance_cfg, "VM_INSTANCE_CFG")
-        .context(
-            "write variable w/ path to data attested by the InstanceRoT",
-        )?;
-    vm_instance_cfg.pop();
+    // record the path to the log used by the mock VmInstanceRot
+    test_data.push("vm-instance-cfg.json");
+    write_path_to_conf(&config_out, &test_data, "VM_INSTANCE_CFG").context(
+        "write variable w/ path to data attested by the InstanceRoT",
+    )?;
 
     Ok(())
 }

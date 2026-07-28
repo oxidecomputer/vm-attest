@@ -10,8 +10,8 @@ test-data = []
 
 [dependencies]
 # these dependencies both come from the `dice-util` repo and should be pinned to the same git rev.
-attest-data = { git = "https://github.com/oxidecomputer/dice-util", rev = "d7472bfa91aee859c3fe0bdc1dbb1e320285228e" }
-dice-verifier = { git = "https://github.com/oxidecomputer/dice-util", rev = "d7472bfa91aee859c3fe0bdc1dbb1e320285228e", features = ["mock"] }
+attest-data = { git = "https://github.com/oxidecomputer/dice-util", rev = "861fe4098abc8d0bba2d26a4da7bec68e21f5ba5" }
+dice-verifier = { git = "https://github.com/oxidecomputer/dice-util", rev = "861fe4098abc8d0bba2d26a4da7bec68e21f5ba5", features = ["mock"] }
 
 const-oid = { version = "0.9.5", features = ["db"] }
 ed25519-dalek = { version = "2.1", default-features = false }
@@ -27,9 +27,12 @@ uuid = { version = "1.18.1", features = ["std", "serde"] }
 x509-cert = "0.2.5"
 
 [build-dependencies]
-anyhow.version = "1.0.100"
+anyhow.version = "1.0.104"
+attest-mock = { git = "https://github.com/oxidecomputer/dice-util", rev = "861fe4098abc8d0bba2d26a4da7bec68e21f5ba5", optional = true }
+camino = { version = "1.2.3", optional = true }
+pki-playground = { git = "https://github.com/oxidecomputer/pki-playground", rev = "e74ca3af405bf805611b0d210dd2515936b79aaf", optional = true }
+rats-corim = { git = "https://github.com/oxidecomputer/rats-corim", rev = "f0d5d5168d3d31487a56df32c676b0c6240bcc6b", optional = true }
 
 [dev-dependencies]
-rats-corim.git = "https://github.com/oxidecomputer/rats-corim"
-vm-attest = { path = ".", features = ["test-data"] }
+vm-attest = { path = ".", features = ["attest-mock", "camino", "pki-playground", "test-data"] }
 tokio = { version = "1", features = ["full"] }
