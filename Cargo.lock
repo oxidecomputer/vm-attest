@@ -186,14 +186,14 @@ dependencies = [
 [[package]]
 name = "attest-data"
 version = "0.5.0"
-source = "git+https://github.com/oxidecomputer/dice-util?rev=61c2ea8f9bebc52b602e6f5d18b6faa7eca72cae#61c2ea8f9bebc52b602e6f5d18b6faa7eca72cae"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=861fe4098abc8d0bba2d26a4da7bec68e21f5ba5#861fe4098abc8d0bba2d26a4da7bec68e21f5ba5"
 dependencies = [
  "const-oid 0.9.6",
  "der",
  "getrandom 0.4.3",
  "hex",
  "hubpack",
- "rats-corim 0.1.0 (git+https://github.com/oxidecomputer/rats-corim?rev=1493d7f58e189125641d81f03f2dfb5941567c82)",
+ "rats-corim 0.1.0 (git+https://github.com/oxidecomputer/rats-corim)",
  "salty",
  "serde",
  "serde_with",
@@ -205,14 +205,14 @@ dependencies = [
 [[package]]
 name = "attest-data"
 version = "0.5.0"
-source = "git+https://github.com/oxidecomputer/dice-util?rev=861fe4098abc8d0bba2d26a4da7bec68e21f5ba5#861fe4098abc8d0bba2d26a4da7bec68e21f5ba5"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c#9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c"
 dependencies = [
  "const-oid 0.9.6",
  "der",
  "getrandom 0.4.3",
  "hex",
  "hubpack",
- "rats-corim 0.1.0 (git+https://github.com/oxidecomputer/rats-corim)",
+ "rats-corim 0.1.0 (git+https://github.com/oxidecomputer/rats-corim?rev=1493d7f58e189125641d81f03f2dfb5941567c82)",
  "salty",
  "serde",
  "serde_with",
@@ -1031,11 +1031,11 @@ dependencies = [
 [[package]]
 name = "dice-verifier"
 version = "0.3.0-pre0"
-source = "git+https://github.com/oxidecomputer/dice-util?rev=61c2ea8f9bebc52b602e6f5d18b6faa7eca72cae#61c2ea8f9bebc52b602e6f5d18b6faa7eca72cae"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c#9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c"
 dependencies = [
  "anyhow",
  "async-trait",
- "attest-data 0.5.0 (git+https://github.com/oxidecomputer/dice-util?rev=61c2ea8f9bebc52b602e6f5d18b6faa7eca72cae)",
+ "attest-data 0.5.0 (git+https://github.com/oxidecomputer/dice-util?rev=9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c)",
  "cfg-if",
  "const-oid 0.9.6",
  "der",
@@ -2634,11 +2634,11 @@ checksum = "d211803b9b6b570f68772237e415a029d5a50c65d382910b879fb19d3271f94d"
 [[package]]
 name = "oxide-rot"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/dice-util?rev=61c2ea8f9bebc52b602e6f5d18b6faa7eca72cae#61c2ea8f9bebc52b602e6f5d18b6faa7eca72cae"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c#9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c"
 dependencies = [
  "anyhow",
  "async-trait",
- "attest-data 0.5.0 (git+https://github.com/oxidecomputer/dice-util?rev=61c2ea8f9bebc52b602e6f5d18b6faa7eca72cae)",
+ "attest-data 0.5.0 (git+https://github.com/oxidecomputer/dice-util?rev=9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c)",
  "cfg-if",
  "der",
  "ed25519-dalek",
@@ -4286,7 +4286,7 @@ name = "vm-attest"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "attest-data 0.5.0 (git+https://github.com/oxidecomputer/dice-util?rev=61c2ea8f9bebc52b602e6f5d18b6faa7eca72cae)",
+ "attest-data 0.5.0 (git+https://github.com/oxidecomputer/dice-util?rev=9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c)",
  "attest-mock",
  "camino",
  "const-oid 0.9.6",
