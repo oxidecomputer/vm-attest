@@ -3104,21 +3104,6 @@ dependencies = [
 [[package]]
 name = "rats-corim"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/rats-corim?rev=f0d5d5168d3d31487a56df32c676b0c6240bcc6b#f0d5d5168d3d31487a56df32c676b0c6240bcc6b"
-dependencies = [
- "ciborium",
- "ciborium-io",
- "clap",
- "hex",
- "serde",
- "serde_with",
- "strum 0.26.3",
- "thiserror",
-]
-
-[[package]]
-name = "rats-corim"
-version = "0.1.0"
 source = "git+https://github.com/oxidecomputer/rats-corim#f0d5d5168d3d31487a56df32c676b0c6240bcc6b"
 dependencies = [
  "ciborium",
@@ -4297,7 +4282,7 @@ dependencies = [
  "hubpack",
  "oxide-rot",
  "pki-playground",
- "rats-corim 0.1.0 (git+https://github.com/oxidecomputer/rats-corim?rev=f0d5d5168d3d31487a56df32c676b0c6240bcc6b)",
+ "rats-corim 0.1.0 (git+https://github.com/oxidecomputer/rats-corim?rev=1493d7f58e189125641d81f03f2dfb5941567c82)",
  "serde",
  "serde_json",
  "serde_with",
