@@ -2816,7 +2816,7 @@ dependencies = [
 [[package]]
 name = "pki-playground"
 version = "0.2.0"
-source = "git+https://github.com/oxidecomputer/pki-playground?rev=e74ca3af405bf805611b0d210dd2515936b79aaf#e74ca3af405bf805611b0d210dd2515936b79aaf"
+source = "git+https://github.com/oxidecomputer/pki-playground?rev=98865b0f4716c52adcb6d940fdb8c3ab90ad409a#98865b0f4716c52adcb6d940fdb8c3ab90ad409a"
 dependencies = [
  "camino",
  "clap",
