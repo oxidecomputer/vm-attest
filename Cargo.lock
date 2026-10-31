@@ -222,6 +222,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "attest-data"
+version = "0.5.0"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=f596264ae00663863fc0514a41359753b4e9f674#f596264ae00663863fc0514a41359753b4e9f674"
+dependencies = [
+ "const-oid 0.9.6",
+ "der",
+ "getrandom 0.4.3",
+ "hex",
+ "hubpack",
+ "rats-corim 0.1.0 (git+https://github.com/oxidecomputer/rats-corim?rev=1493d7f58e189125641d81f03f2dfb5941567c82)",
+ "salty",
+ "serde",
+ "serde_with",
+ "sha3",
+ "static_assertions",
+ "thiserror",
+]
+
+[[package]]
 name = "attest-mock"
 version = "0.1.0"
 source = "git+https://github.com/oxidecomputer/dice-util?rev=861fe4098abc8d0bba2d26a4da7bec68e21f5ba5#861fe4098abc8d0bba2d26a4da7bec68e21f5ba5"
@@ -1699,7 +1718,7 @@ dependencies = [
 [[package]]
 name = "humility-arch-arm"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/humility?rev=9eb263bf2563dc2c5ae3a1678969774d1d4374b9#9eb263bf2563dc2c5ae3a1678969774d1d4374b9"
+source = "git+https://github.com/oxidecomputer/humility?rev=cfcdf5a266e83648fdce616637c8cda5b92ec501#cfcdf5a266e83648fdce616637c8cda5b92ec501"
 dependencies = [
  "capstone",
  "num-derive",
@@ -1709,7 +1728,7 @@ dependencies = [
 [[package]]
 name = "humility-core"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/humility?rev=9eb263bf2563dc2c5ae3a1678969774d1d4374b9#9eb263bf2563dc2c5ae3a1678969774d1d4374b9"
+source = "git+https://github.com/oxidecomputer/humility?rev=cfcdf5a266e83648fdce616637c8cda5b92ec501#cfcdf5a266e83648fdce616637c8cda5b92ec501"
 dependencies = [
  "addr2line 0.26.1",
  "anyhow",
@@ -1751,7 +1770,7 @@ dependencies = [
 [[package]]
 name = "humility-doppel"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/humility?rev=9eb263bf2563dc2c5ae3a1678969774d1d4374b9#9eb263bf2563dc2c5ae3a1678969774d1d4374b9"
+source = "git+https://github.com/oxidecomputer/humility?rev=cfcdf5a266e83648fdce616637c8cda5b92ec501#cfcdf5a266e83648fdce616637c8cda5b92ec501"
 dependencies = [
  "anyhow",
  "humility-core",
@@ -1762,7 +1781,7 @@ dependencies = [
 [[package]]
 name = "humility-hiffy"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/humility?rev=9eb263bf2563dc2c5ae3a1678969774d1d4374b9#9eb263bf2563dc2c5ae3a1678969774d1d4374b9"
+source = "git+https://github.com/oxidecomputer/humility?rev=cfcdf5a266e83648fdce616637c8cda5b92ec501#cfcdf5a266e83648fdce616637c8cda5b92ec501"
 dependencies = [
  "anyhow",
  "hif",
@@ -1780,7 +1799,7 @@ dependencies = [
 [[package]]
 name = "humility-idol"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/humility?rev=9eb263bf2563dc2c5ae3a1678969774d1d4374b9#9eb263bf2563dc2c5ae3a1678969774d1d4374b9"
+source = "git+https://github.com/oxidecomputer/humility?rev=cfcdf5a266e83648fdce616637c8cda5b92ec501#cfcdf5a266e83648fdce616637c8cda5b92ec501"
 dependencies = [
  "anyhow",
  "hubpack",
@@ -1794,7 +1813,7 @@ dependencies = [
 [[package]]
 name = "humility-log"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/humility?rev=9eb263bf2563dc2c5ae3a1678969774d1d4374b9#9eb263bf2563dc2c5ae3a1678969774d1d4374b9"
+source = "git+https://github.com/oxidecomputer/humility?rev=cfcdf5a266e83648fdce616637c8cda5b92ec501#cfcdf5a266e83648fdce616637c8cda5b92ec501"
 dependencies = [
  "colored",
  "slog",
@@ -1803,7 +1822,7 @@ dependencies = [
 [[package]]
 name = "humility-probes-core"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/humility?rev=9eb263bf2563dc2c5ae3a1678969774d1d4374b9#9eb263bf2563dc2c5ae3a1678969774d1d4374b9"
+source = "git+https://github.com/oxidecomputer/humility?rev=cfcdf5a266e83648fdce616637c8cda5b92ec501#cfcdf5a266e83648fdce616637c8cda5b92ec501"
 dependencies = [
  "anyhow",
  "humility-arch-arm",
@@ -1822,7 +1841,7 @@ dependencies = [
 [[package]]
 name = "humility_load_derive"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/humility?rev=9eb263bf2563dc2c5ae3a1678969774d1d4374b9#9eb263bf2563dc2c5ae3a1678969774d1d4374b9"
+source = "git+https://github.com/oxidecomputer/humility?rev=cfcdf5a266e83648fdce616637c8cda5b92ec501#cfcdf5a266e83648fdce616637c8cda5b92ec501"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2634,11 +2653,11 @@ checksum = "d211803b9b6b570f68772237e415a029d5a50c65d382910b879fb19d3271f94d"
 [[package]]
 name = "oxide-rot"
 version = "0.1.0"
-source = "git+https://github.com/oxidecomputer/dice-util?rev=9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c#9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=f596264ae00663863fc0514a41359753b4e9f674#f596264ae00663863fc0514a41359753b4e9f674"
 dependencies = [
  "anyhow",
  "async-trait",
- "attest-data 0.5.0 (git+https://github.com/oxidecomputer/dice-util?rev=9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c)",
+ "attest-data 0.5.0 (git+https://github.com/oxidecomputer/dice-util?rev=f596264ae00663863fc0514a41359753b4e9f674)",
  "cfg-if",
  "der",
  "ed25519-dalek",
