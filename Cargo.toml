@@ -29,7 +29,7 @@ x509-cert = "0.2.5"
 
 [build-dependencies]
 anyhow.version = "1.0.104"
-attest-mock = { git = "https://github.com/oxidecomputer/dice-util", rev = "861fe4098abc8d0bba2d26a4da7bec68e21f5ba5", optional = true }
+attest-mock = { git = "https://github.com/oxidecomputer/dice-util", rev = "f596264ae00663863fc0514a41359753b4e9f674", optional = true }
 camino = { version = "1.2.3", optional = true }
 pki-playground = { git = "https://github.com/oxidecomputer/pki-playground", rev = "e74ca3af405bf805611b0d210dd2515936b79aaf", optional = true }
 rats-corim = { git = "https://github.com/oxidecomputer/rats-corim", rev = "f0d5d5168d3d31487a56df32c676b0c6240bcc6b", optional = true }
