@@ -222,6 +222,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "attest-data"
+version = "0.5.0"
+source = "git+https://github.com/oxidecomputer/dice-util?rev=f596264ae00663863fc0514a41359753b4e9f674#f596264ae00663863fc0514a41359753b4e9f674"
+dependencies = [
+ "const-oid 0.9.6",
+ "der",
+ "getrandom 0.4.3",
+ "hex",
+ "hubpack",
+ "rats-corim 0.1.0 (git+https://github.com/oxidecomputer/rats-corim?rev=1493d7f58e189125641d81f03f2dfb5941567c82)",
+ "salty",
+ "serde",
+ "serde_with",
+ "sha3",
+ "static_assertions",
+ "thiserror",
+]
+
+[[package]]
 name = "attest-mock"
 version = "0.1.0"
 source = "git+https://github.com/oxidecomputer/dice-util?rev=861fe4098abc8d0bba2d26a4da7bec68e21f5ba5#861fe4098abc8d0bba2d26a4da7bec68e21f5ba5"
@@ -4286,7 +4305,7 @@ name = "vm-attest"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "attest-data 0.5.0 (git+https://github.com/oxidecomputer/dice-util?rev=9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c)",
+ "attest-data 0.5.0 (git+https://github.com/oxidecomputer/dice-util?rev=f596264ae00663863fc0514a41359753b4e9f674)",
  "attest-mock",
  "camino",
  "const-oid 0.9.6",
