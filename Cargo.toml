@@ -11,7 +11,7 @@ test-data = []
 [dependencies]
 # these dependencies both come from the `dice-util` repo and should be pinned to the same git rev.
 attest-data = { git = "https://github.com/oxidecomputer/dice-util", rev = "9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c" }
-dice-verifier = { git = "https://github.com/oxidecomputer/dice-util", rev = "9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c" }
+dice-verifier = { git = "https://github.com/oxidecomputer/dice-util", rev = "22178824119bfbfddae5dd498334339c660f8a5a" }
 oxide-rot = { git = "https://github.com/oxidecomputer/dice-util", rev = "9e2a1c872cf4bfef81f58b2ecb0cfbcd5992871c", features = ["mock"] }
 
 const-oid = { version = "0.9.5", features = ["db"] }
